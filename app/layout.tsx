@@ -17,9 +17,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body
         className={`${geist.variable} ${inter.variable} ${instrument.variable} bg-[#0f0f13] font-sans text-[#ededef] antialiased`}
       >
-        <Navbar></Navbar>
+        {/* <Navbar></Navbar> */}
         {children}
-        <Footer />
+        {/* <Footer /> */}
       </body>
     </html>
   );
