@@ -10,6 +10,7 @@ import {
     ChevronRight,
     FileText,
     LayoutDashboard,
+    LayoutDashboardIcon,
     LogOut,
     Menu,
     PlusCircle,
@@ -48,19 +49,18 @@ function menuFor(role?: string): MenuItem[] {
                 profileItem,
                 { label: "Post a Job", href: "/dashboard/jobs/new", Icon: PlusCircle },
                 { label: "Manage Jobs", href: "/dashboard/jobs", Icon: BriefcaseBusiness },
-                { label: "Applicants", href: "/dashboard/applicants", Icon: UsersRound },
+                { label: "Dashboard", href: "/dashboard", Icon: LayoutDashboardIcon },
             ];
         case "admin":
             return [
                 profileItem,
-                { label: "Admin Dashboard", href: "/admin", Icon: LayoutDashboard },
-                { label: "Manage Users", href: "/admin/users", Icon: UsersRound },
+                { label: "Dashboard", href: "/dashboard", Icon: LayoutDashboardIcon },
             ];
         default: // seeker
             return [
                 profileItem,
                 { label: "Saved Jobs", href: "/saved-jobs", Icon: Bookmark },
-                { label: "My Applications", href: "/applications", Icon: FileText },
+                { label: "Dashboard", href: "/dashboard", Icon: LayoutDashboardIcon },
             ];
     }
 }
