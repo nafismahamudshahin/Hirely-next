@@ -3,19 +3,16 @@
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import {
     Bookmark,
     BriefcaseBusiness,
     ChevronRight,
-    FileText,
-    LayoutDashboard,
     LayoutDashboardIcon,
     LogOut,
     Menu,
     PlusCircle,
     UserRound,
-    UsersRound,
     X,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
@@ -32,7 +29,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 
 const links = [
-    { label: "Browse Jobs", href: "#jobs" },
+    { label: "Browse Jobs", href: "/browse-jobs" },
     { label: "Company", href: "#company" },
     { label: "Pricing", href: "#pricing" },
 ];
@@ -49,18 +46,18 @@ function menuFor(role?: string): MenuItem[] {
                 profileItem,
                 { label: "Post a Job", href: "/dashboard/jobs/new", Icon: PlusCircle },
                 { label: "Manage Jobs", href: "/dashboard/jobs", Icon: BriefcaseBusiness },
-                { label: "Dashboard", href: "/dashboard", Icon: LayoutDashboardIcon },
+                { label: "Dashboard", href: `/dashboard/${role}`, Icon: LayoutDashboardIcon },
             ];
         case "admin":
             return [
                 profileItem,
-                { label: "Dashboard", href: "/dashboard", Icon: LayoutDashboardIcon },
+                { label: "Dashboard", href: `/dashboard/${role}`, Icon: LayoutDashboardIcon },
             ];
         default: // seeker
             return [
                 profileItem,
                 { label: "Saved Jobs", href: "/saved-jobs", Icon: Bookmark },
-                { label: "Dashboard", href: "/dashboard", Icon: LayoutDashboardIcon },
+                { label: "Dashboard", href: `/dashboard/${role}`, Icon: LayoutDashboardIcon },
             ];
     }
 }
@@ -246,9 +243,9 @@ export default function Navbar() {
             },
         });
     }
-
+    const path = usePathname();
     return (
-        <header className="sticky top-0 z-50 bg-[#050507]/80 px-4 pt-4 backdrop-blur-md sm:px-6">
+        <header className={`sticky top-0 z-50 ${path == "/browse-jobs" || path.startsWith("/browse-jobs/") ? "bg-black" : `bg-[#050507]/80`}  px-4 pt-4 backdrop-blur-md sm:px-6`}>
             <nav
                 aria-label="Main"
                 className="relative mx-auto w-full max-w-[1180px] rounded-xl border border-white/[0.07] bg-[#0d0d11]/95 backdrop-blur-xl"
