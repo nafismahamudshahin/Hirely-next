@@ -1,43 +1,50 @@
-"use client";
+"use client"
 
-import { useState } from "react";
-import Link from "next/link";
-import { useRouter, useSearchParams } from "next/navigation";
-import { Controller, useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
-import { CheckCircle2, Eye, EyeOff, Loader2 } from "lucide-react";
+import { useEffect, useState } from "react"
+import Link from "next/link"
+import { useRouter, useSearchParams } from "next/navigation"
+import { Controller, useForm } from "react-hook-form"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { z } from "zod"
+import { CheckCircle2, Eye, EyeOff, Loader2 } from "lucide-react"
 
-import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { signIn } from "@/lib/auth-client";
-import SocialAuthButtons from "./SocalAuthBtn";
+import { Button } from "@/components/ui/button"
+import { Checkbox } from "@/components/ui/checkbox"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { signIn, useSession } from "@/lib/auth-client"
+import SocialAuthButtons from "./SocalAuthBtn"
 
 const schema = z.object({
     email: z.string().trim().email("Enter a valid email address"),
     password: z.string().min(1, "Enter your password"),
     remember: z.boolean(),
-});
+})
 
-type FormValues = z.infer<typeof schema>;
+type FormValues = z.infer<typeof schema>
 
 const inputCls =
-    "h-11 border-white/10 bg-white/[0.04] text-white placeholder:text-white/35 focus-visible:border-[#5b4bff] focus-visible:ring-[#5b4bff]/30";
+    "h-11 border-white/10 bg-white/[0.04] text-white placeholder:text-white/35 focus-visible:border-[#5b4bff] focus-visible:ring-[#5b4bff]/30"
 
 // Only allow same-site relative redirects (blocks open-redirect via ?next=https://evil.com)
 function safeNext(next: string | null) {
-    return next && next.startsWith("/") && !next.startsWith("//") ? next : "/";
+    return next && next.startsWith("/") && !next.startsWith("//") ? next : "/"
 }
 
 export default function LoginForm() {
-    const router = useRouter();
-    const params = useSearchParams();
-    const justRegistered = params.get("registered") === "1";
+    const { data: session } = useSession()
+    const user = session?.user
+    const router = useRouter()
+    const params = useSearchParams()
+    const justRegistered = params.get("registered") === "1"
+    const redirectTo = safeNext(params.get("redirectTo") ?? params.get("next"))
 
-    const [showPassword, setShowPassword] = useState(false);
-    const [serverError, setServerError] = useState<string | null>(null);
+    const [showPassword, setShowPassword] = useState(false)
+    const [serverError, setServerError] = useState<string | null>(null)
+
+    useEffect(() => {
+        if (user) router.replace(redirectTo)
+    }, [user, router, redirectTo])
 
     const {
         register,
@@ -47,29 +54,28 @@ export default function LoginForm() {
     } = useForm<FormValues>({
         resolver: zodResolver(schema),
         defaultValues: { email: "", password: "", remember: false },
-    });
+    })
 
     async function onSubmit(values: FormValues) {
-        setServerError(null);
+        setServerError(null)
         try {
             const { error } = await signIn.email({
                 email: values.email,
                 password: values.password,
                 rememberMe: values.remember,
-            });
+            })
 
             if (error) {
-                setServerError(error.message ?? "Incorrect email or password.");
-                return;
+                setServerError(error.message ?? "Incorrect email or password.")
+                return
             }
 
-            router.push(safeNext(params.get("next")));
-            router.refresh();
+            // router.push(safeNext(params.get("next")));
+            router.refresh()
         } catch {
-            setServerError("Network error. Check your connection and try again.");
+            setServerError("Network error. Check your connection and try again.")
         }
     }
-
     return (
         <form onSubmit={handleSubmit(onSubmit)} noValidate className="space-y-5">
             {justRegistered && (
@@ -105,7 +111,10 @@ export default function LoginForm() {
 
             <div className="space-y-2">
                 <div className="flex items-center justify-between">
-                    <Label htmlFor="password" className="text-xs font-medium text-white/75">
+                    <Label
+                        htmlFor="password"
+                        className="text-xs font-medium text-white/75"
+                    >
                         Password
                     </Label>
                     <Link
@@ -130,7 +139,7 @@ export default function LoginForm() {
                         type="button"
                         onClick={() => setShowPassword((v) => !v)}
                         aria-label={showPassword ? "Hide password" : "Show password"}
-                        className="absolute right-1 top-1/2 inline-flex size-9 -translate-y-1/2 items-center justify-center rounded-md text-white/50 transition-colors hover:text-white"
+                        className="absolute top-1/2 right-1 inline-flex size-9 -translate-y-1/2 items-center justify-center rounded-md text-white/50 transition-colors hover:text-white"
                     >
                         {showPassword ? (
                             <EyeOff aria-hidden="true" className="h-4 w-4" />
@@ -178,7 +187,9 @@ export default function LoginForm() {
                 disabled={isSubmitting}
                 className="h-11 w-full rounded-lg bg-[#5b4bff] text-sm font-semibold text-white shadow-[0_6px_24px_rgba(91,75,255,0.35)] hover:bg-[#6d5eff]"
             >
-                {isSubmitting && <Loader2 aria-hidden="true" className="h-4 w-4 animate-spin" />}
+                {isSubmitting && (
+                    <Loader2 aria-hidden="true" className="h-4 w-4 animate-spin" />
+                )}
                 {isSubmitting ? "Signing in…" : "Sign in"}
             </Button>
             <div>
@@ -186,10 +197,13 @@ export default function LoginForm() {
             </div>
             <p className="text-center text-xs text-white/50">
                 Don&apos;t have an account?{" "}
-                <Link href="/signup" className="font-medium text-[#948fff] hover:underline">
+                <Link
+                    href="/signup"
+                    className="font-medium text-[#948fff] hover:underline"
+                >
                     Create one
                 </Link>
             </p>
         </form>
-    );
+    )
 }
