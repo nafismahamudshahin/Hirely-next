@@ -35,7 +35,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
         <SidebarProvider style={sidebarTheme}>
             <SidebarLayout user={{ name: u.name, email: u.email, image: u.image, role: u.role }} />
 
-            <SidebarInset className="bg-[#050507] text-white">
+            <SidebarInset className="bg-[#111112] text-white">
                 <header className="sticky top-0 z-10 flex h-14 shrink-0 items-center gap-3 border-b border-white/[0.07] bg-[#050507]/80 px-4 backdrop-blur-md">
                     <SidebarTrigger className="-ml-1 text-white/70 hover:bg-white/[0.06] hover:text-white" />
                     <span aria-hidden="true" className="h-5 w-px bg-white/10" />
